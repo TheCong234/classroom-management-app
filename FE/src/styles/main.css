@@ -1,0 +1,4 @@
+.link-primary{
+  color: var(--text-primary) !important;
+  text-decoration: none !important;
+}
