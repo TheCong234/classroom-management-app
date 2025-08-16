@@ -10,6 +10,11 @@ const InstructorServices = {
       if (existsPhone.exists) {
         throw new Error(`Phone ${phone} already exists.`);
       }
+      const emailQuery = await usersCol.where("email", "==", data.email).limit(1).get();
+      if (!emailQuery.empty) {
+        throw new Error("Email already exists.");
+      }
+
       await usersCol.doc(phone).create(data);
       return { phone, ...data };
     } catch (error) {

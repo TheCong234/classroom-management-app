@@ -32,8 +32,8 @@ const AuthServices = {
 
   async validateAccessCode(phone, accessCode) {
     try {
-      const accessCode = await db.collection("accessCodes").doc(phone).get();
-      if (!accessCode.exists || accessCode.data().code !== accessCode) {
+      const accessCodeSnap = await db.collection("accessCodes").doc(phone).get();
+      if (!accessCodeSnap.exists || accessCodeSnap.data().code !== accessCode) {
         throw new Error("Code is invalid");
       }
       await db.collection("accessCodes").doc(phone).delete();
@@ -43,7 +43,7 @@ const AuthServices = {
       const token = jwt.sign({ phone: phone, role: role }, jwtSecretKey, {
         expiresIn: "5d",
       });
-      return token;
+      return { phone, token };
     } catch (error) {
       console.error("Error in validateAccessCode:", error);
       throw error;
