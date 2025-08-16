@@ -2,12 +2,12 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { accessCodeSchema } from "../../../validations/codeSchema.js";
-import useAuth from "../../../hooks/useAuth.js";
-import { getPhone } from "../../../utils/localStoreHelper.js";
+import { getEmail } from "../../../utils/localStoreHelper.js";
+import useStudent from "../../../hooks/useStudent.js";
 
-export default function PhoneVerificationPage() {
+export default function EmailVerificationPage() {
   const navigate = useNavigate();
-  const { hanldeValidateAccessCodeByPhone } = useAuth();
+  const { hanldeValidateAccessCodeByEmail } = useStudent();
   const {
     register,
     handleSubmit,
@@ -18,12 +18,14 @@ export default function PhoneVerificationPage() {
 
   const onSubmit = async (data) => {
     try {
-      const phone = getPhone();
-      const result = await hanldeValidateAccessCodeByPhone({ ...data, phone });
+      const email = getEmail();
+      const result = await hanldeValidateAccessCodeByEmail({ ...data, email });
       const resData = result.payload;
       if (resData.success === false) {
         return alert(resData.message);
       }
+      localStorage.removeItem(email);
+      localStorage.setItem("phone", resData.phone);
       localStorage.setItem("token", resData.token);
       if (resData.role === "instructor") {
         navigate("/instructor");
@@ -59,9 +61,9 @@ export default function PhoneVerificationPage() {
         </svg>
         <span className="mt-1 font-medium">Back</span>
       </button>
-      <h2 className="font-bold text-[25px] text-center mt-1">Phone verification</h2>
+      <h2 className="font-bold text-[25px] text-center mt-1">Email verification</h2>
       <p className="text-sm text-center mt-3 text-gray-400">
-        Please enter your code that send to your phone
+        Please enter your code that send to your Email
       </p>
       <input
         {...register("accessCode")}

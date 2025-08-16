@@ -53,7 +53,7 @@ const StudentServices = {
       const token = jwt.sign({ phone: phone, role: role }, jwtSecretKey, {
         expiresIn: "5d",
       });
-      return { phone, token };
+      return { phone, role, token };
     } catch (error) {
       console.error("Error in validateAccessCode:", error);
       throw error;

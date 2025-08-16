@@ -1,37 +1,30 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
+import { Link } from "react-router-dom";
+import { signinSchema } from "../../../validations/signinSchema.js";
 import { useNavigate } from "react-router-dom";
-import { accessCodeSchema } from "../../../validations/codeSchema.js";
 import useAuth from "../../../hooks/useAuth.js";
-import { getPhone } from "../../../utils/localStoreHelper.js";
 
-export default function PhoneVerificationPage() {
+export default function PhoneSigninPage() {
   const navigate = useNavigate();
-  const { hanldeValidateAccessCodeByPhone } = useAuth();
+  const { hanldeCreateAccessCodeByPhone } = useAuth();
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm({
-    resolver: yupResolver(accessCodeSchema),
+    resolver: yupResolver(signinSchema),
   });
 
   const onSubmit = async (data) => {
     try {
-      const phone = getPhone();
-      const result = await hanldeValidateAccessCodeByPhone({ ...data, phone });
-      const resData = result.payload;
-      if (resData.success === false) {
-        return alert(resData.message);
+      const result = await hanldeCreateAccessCodeByPhone(data);
+      if (result.payload.success === false) {
+        alert(result.payload.message);
+        return;
       }
-      localStorage.setItem("token", resData.token);
-      if (resData.role === "instructor") {
-        navigate("/instructor");
-      } else if (resData.role === "student") {
-        navigate("/student");
-      } else {
-        navigate("/signin");
-      }
+      localStorage.setItem("phone", data.phone);
+      navigate("/phone-verification");
     } catch (error) {
       console.log(error);
     }
@@ -59,25 +52,21 @@ export default function PhoneVerificationPage() {
         </svg>
         <span className="mt-1 font-medium">Back</span>
       </button>
-      <h2 className="font-bold text-[25px] text-center mt-1">Phone verification</h2>
-      <p className="text-sm text-center mt-3 text-gray-400">
-        Please enter your code that send to your phone
-      </p>
+      <h2 className="font-bold text-[25px] text-center mt-1">Sign In</h2>
+      <p className="text-sm text-center mt-3 text-gray-400">Please enter your phone to sign in</p>
       <input
-        {...register("accessCode")}
+        {...register("phone")}
         type="text"
-        placeholder="Enter Your Code"
+        placeholder="Your Phone Number"
         className="border-[1px] border-[#9095A1] px-3 py-2 w-full mt-10 rounded-md text-sm"
       />
-      {errors.accessCode && (
-        <p className="text-red-500 text-xs mt-2">{errors.accessCode.message}</p>
-      )}
+      {errors.phone && <p className="text-red-500 text-xs mt-2">{errors.phone.message}</p>}
       <button type="submit" className="mt-6 rounded-md bg-blue-500 w-full py-2 text-white text-sm">
-        Submit
+        Next
       </button>
+      <p className="text-sm text-center mt-4">passwordless authentication methods.</p>
       <p className="text-[13px] absolute bottom-4 left-6">
-        Code not receive?&nbsp;
-        <span className="text-blue-500">Send again</span>
+        Don’t having account? <span className="text-blue-500">Sign up</span>
       </p>
     </form>
   );

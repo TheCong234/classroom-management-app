@@ -19,10 +19,10 @@ const AuthServices = {
         code,
         createdAt: new Date(),
       });
-      if (res) {
-        const phoneE164 = convertToE164(phone); // Convert 09... to E.164 +849...
-        await sendSms(phoneE164, `Access code: ${code}`);
-      }
+      // if (res) {
+      //   const phoneE164 = convertToE164(phone); // Convert 09... to E.164 +849...
+      //   await sendSms(phoneE164, `Access code: ${code}`);
+      // }
       return { phone };
     } catch (error) {
       console.error("Error in createAccessCode:", error);
@@ -43,7 +43,7 @@ const AuthServices = {
       const token = jwt.sign({ phone: phone, role: role }, jwtSecretKey, {
         expiresIn: "5d",
       });
-      return { phone, token };
+      return { phone, role, token };
     } catch (error) {
       console.error("Error in validateAccessCode:", error);
       throw error;

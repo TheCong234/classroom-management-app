@@ -8,9 +8,13 @@ const InstructorLayout = lazy(() => import("../layouts/InstructorLayout.jsx"));
 const StudentLayout = lazy(() => import("../layouts/StudentLayout.jsx"));
 
 //lazy load pages
-const SigninPage = lazy(() => import("../features/auth/pages/SinginPage.jsx"));
+const PhoneSigninPage = lazy(() => import("../features/auth/pages/PhoneSigninPage.jsx"));
+const EmailSigninPage = lazy(() => import("../features/student/pages/EmailSinginPage.jsx"));
 const PhoneVerificationPage = lazy(() =>
   import("../features/auth/pages/PhoneVerificationPage.jsx")
+);
+const EmailVerificationPage = lazy(() =>
+  import("../features/student/pages/EmailVerificationPage.jsx")
 );
 const InsStudentsPage = lazy(() => import("../features/instructor/pages/StudentsPage.jsx"));
 const InsLessonsPage = lazy(() => import("../features/instructor/pages/LessonsPage.jsx"));
@@ -27,12 +31,24 @@ const routesConfig = [
         element: <AuthLayout />,
         children: [
           {
+            path: "",
+            element: <PhoneSigninPage />,
+          },
+          {
             path: "signin",
-            element: <SigninPage />,
+            element: <PhoneSigninPage />,
           },
           {
             path: "phone-verification",
             element: <PhoneVerificationPage />,
+          },
+          {
+            path: "email-signin",
+            element: <EmailSigninPage />,
+          },
+          {
+            path: "email-verification",
+            element: <EmailVerificationPage />,
           },
         ],
       },
