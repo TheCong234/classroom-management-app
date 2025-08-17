@@ -21,9 +21,9 @@ const InstructorControllers = {
   },
 
   async assignLesson(req, res) {
-    const { studentPhone, title, description } = req.body;
+    const { studentPhones, title, description } = req.body;
     try {
-      const result = await InstructorServices.assignLesson(studentPhone, { title, description, completed: false });
+      const result = await InstructorServices.assignLesson(studentPhones, title, description);
       return res.status(statusCode.OK).json(BaseResponse.success("assign success", result));
     } catch (error) {
       return res.status(statusCode.INTERNAL_SERVER_ERROR).json(BaseResponse.error(error.message, error));

@@ -27,22 +27,25 @@ const InstructorServices = {
     }
   },
 
-  async assignLesson(studentPhone, data) {
+  async assignLesson(studentPhones, title, description) {
     try {
-      const student = await usersCol.doc(studentPhone).get();
-      if (!student.exists) throw new Error("Student not found");
-
       const lessonId = uuidv4();
       const newLesson = {
         id: lessonId,
-        ...data,
+        title,
+        description,
       };
 
-      await usersCol.doc(studentPhone).update({
-        lessons: [...(student.data().lessons || []), newLesson],
-      });
-      const updatedStudent = await usersCol.doc(studentPhone).get();
-      return updatedStudent.data();
+      await Promise.all(
+        studentPhones.map(async (phone) => {
+          const studentSnapshot = await usersCol.doc(phone).get();
+          const studentData = studentSnapshot.data();
+          await usersCol.doc(phone).update({
+            lessons: [...studentData.lessons, newLesson],
+          });
+        })
+      );
+      return { studentPhones };
     } catch (error) {
       console.error("Error in assignLesson", error);
       throw error;

@@ -1,3 +1,3 @@
-export default function MessagesPage() {
-  return <div>Managemetn messages page</div>;
+export default function MessagePage() {
+  return <div>Managemetn Message page</div>;
 }

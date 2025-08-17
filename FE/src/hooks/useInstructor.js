@@ -1,6 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import {
   addStudentAction,
+  assignLessonAction,
   deleteStudentAction,
   editStudentAction,
   getAllStudentsAction,
@@ -30,6 +31,10 @@ const useInstructor = () => {
   const handleDeleteStudent = async (data) => {
     return dispatch(deleteStudentAction(data));
   };
+
+  const handleAssignLesson = async (data) => {
+    return dispatch(assignLessonAction(data));
+  };
   return {
     error,
     loading,
@@ -40,6 +45,7 @@ const useInstructor = () => {
     handleEditStudent,
     handleGetStudentProfile,
     handleDeleteStudent,
+    handleAssignLesson,
   };
 };
 

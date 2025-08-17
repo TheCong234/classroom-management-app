@@ -78,8 +78,10 @@ export default function StudentsPage() {
             <tr>
               <th className="font-normal text-left pl-10 py-3 ">STT</th>
               <th className="font-normal text-left pl-10 py-3 ">Student Name</th>
+              <th className="font-normal">Phone Number</th>
               <th className="font-normal">Email</th>
               <th className="font-normal">Status</th>
+              <th className="font-normal">Address</th>
               <th className="font-normal text-left">Action</th>
             </tr>
           </thead>
@@ -89,6 +91,7 @@ export default function StudentsPage() {
                 <tr className="border-b-[1px] border-gray-100 text-sm" key={index}>
                   <td className="pl-10 py-6">{index + 1}</td>
                   <td className="pl-10 py-6">{student.name}</td>
+                  <td className="pl-10 py-6">{student.phone}</td>
                   <td className="text-center">{student.email}</td>
                   <td className="text-center">
                     {student.status ? (
@@ -97,6 +100,7 @@ export default function StudentsPage() {
                       <span className="px-10 py-2 bg-gray-300 text-[#16D583]">Inactive</span>
                     )}
                   </td>
+                  <td className="text-center">{student.address}</td>
                   <td className="text-left">
                     <div className="">
                       <button

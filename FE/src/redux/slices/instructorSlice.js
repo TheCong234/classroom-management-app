@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import {
   addStudentAction,
+  assignLessonAction,
   deleteStudentAction,
   editStudentAction,
   getAllStudentsAction,
@@ -93,6 +94,19 @@ const instructorSlice = createSlice({
         );
       })
       .addCase(deleteStudentAction.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      //assign Lesson
+      .addCase(assignLessonAction.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(assignLessonAction.fulfilled, (state, action) => {
+        state.loading = false;
+      })
+      .addCase(assignLessonAction.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });

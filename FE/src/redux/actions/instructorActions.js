@@ -60,3 +60,15 @@ export const deleteStudentAction = createAsyncThunk(
     }
   }
 );
+
+export const assignLessonAction = createAsyncThunk(
+  "instructor/assign-lesson",
+  async (data, { rejectWithValue }) => {
+    try {
+      const response = await instructorServices.assignLesson(data);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || "assignLessonAction failed");
+    }
+  }
+);

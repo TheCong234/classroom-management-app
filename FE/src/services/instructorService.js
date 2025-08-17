@@ -43,6 +43,14 @@ const instructorServices = {
       },
     });
   },
+
+  assignLesson: (data) => {
+    return axiosClient.post("/instructor/assignLesson", data, {
+      headers: {
+        Authorization: `Bearer ${getToken()}`,
+      },
+    });
+  },
 };
 
 export default instructorServices;
