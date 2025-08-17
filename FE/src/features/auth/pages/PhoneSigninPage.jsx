@@ -7,7 +7,7 @@ import useAuth from "../../../hooks/useAuth.js";
 
 export default function PhoneSigninPage() {
   const navigate = useNavigate();
-  const { hanldeCreateAccessCodeByPhone } = useAuth();
+  const { loading, hanldeCreateAccessCodeByPhone } = useAuth();
   const {
     register,
     handleSubmit,
@@ -60,9 +60,15 @@ export default function PhoneSigninPage() {
         placeholder="Your Phone Number"
         className="border-[1px] border-[#9095A1] px-3 py-2 w-full mt-10 rounded-md text-sm"
       />
-      {errors.phone && <p className="text-red-500 text-xs mt-2">{errors.phone.message}</p>}
-      <button type="submit" className="mt-6 rounded-md bg-blue-500 w-full py-2 text-white text-sm">
-        Next
+      {errors.phone && <p className="text-red-500 text-xs  mt-2">{errors.phone.message}</p>}
+      <button
+        disabled={loading}
+        type="submit"
+        className={`mt-6 rounded-md  w-full py-2 text-white text-sm ${
+          loading ? "bg-gray-500" : "bg-blue-500"
+        }`}
+      >
+        {loading ? "Loading ..." : "Next"}
       </button>
       <p className="text-sm text-center mt-4">passwordless authentication methods.</p>
       <p className="text-[13px] absolute bottom-4 left-6">

@@ -22,6 +22,16 @@ const AuthControllers = {
       return res.status(statusCode.INTERNAL_SERVER_ERROR).json(BaseResponse.error(error.message, error));
     }
   },
+
+  async getMyProfile(req, res) {
+    const { phone } = req.user;
+    try {
+      const result = await AuthServices.getMyProfile(phone);
+      return res.status(statusCode.OK).json(BaseResponse.success("get success", result));
+    } catch (error) {
+      return res.status(statusCode.INTERNAL_SERVER_ERROR).json(BaseResponse.error(error.message, error));
+    }
+  },
 };
 
 export default AuthControllers;

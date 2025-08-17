@@ -24,3 +24,15 @@ export const validateAccessCodeByPhoneAction = createAsyncThunk(
     }
   }
 );
+
+export const getMyProfileAction = createAsyncThunk(
+  "auth/get-my-profile-action",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await authServices.getMyProfile();
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || "getMyProfile failed");
+    }
+  }
+);

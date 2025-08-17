@@ -1,8 +1,30 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CreateStudentModal from "../components/CreateStudentModal.jsx";
+import useInstructor from "../../../hooks/useInstructor.js";
+import EditStudentModal from "../components/EditStudentModel.jsx";
 
 export default function StudentsPage() {
   const [openCreateModal, setOpenCreateModal] = useState(false);
+  const [openEditModal, setOpenEditModal] = useState(false);
+  const [selectedPhone, setSelectedPhone] = useState("");
+  const { loading, studentData, handleGetAllStudents, handleDeleteStudent } = useInstructor();
+
+  const handleDeleteClick = async (phone) => {
+    try {
+      const result = await handleDeleteStudent({ phone });
+      if (result.payload.success === false) {
+        alert(result.payload.message);
+        return;
+      }
+      alert("Deleted student");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    handleGetAllStudents();
+  }, []);
   return (
     <div className="h-full">
       <div className="min-h-[70vh] rounded-xl border border-gray-50 shadow">
@@ -11,7 +33,7 @@ export default function StudentsPage() {
         </h2>
         <div className="flex items-center justify-between px-10">
           <h3 className="font-medium text-[20px]  py-6 border-b-[1px] border-gray-100">
-            4 Students
+            {studentData?.total} Students
           </h3>
           <div className="flex ">
             <button
@@ -54,6 +76,7 @@ export default function StudentsPage() {
         <table border="1" cellPadding="8" cellSpacing="0" className="w-full">
           <thead className="bg-[#FAFAFA] border-b-[1px] border-gray-100 text-sm ">
             <tr>
+              <th className="font-normal text-left pl-10 py-3 ">STT</th>
               <th className="font-normal text-left pl-10 py-3 ">Student Name</th>
               <th className="font-normal">Email</th>
               <th className="font-normal">Status</th>
@@ -61,39 +84,58 @@ export default function StudentsPage() {
             </tr>
           </thead>
           <tbody className="text-sm">
-            <tr className="border-b-[1px] border-gray-100 text-sm">
-              <td className="pl-10 py-6">Hàng 1 - Cột 1</td>
-              <td className="text-center">Hàng 1 - Cột 2</td>
-              <td className="text-center">
-                <span className="px-10 py-2 bg-[#E3FEF3] text-[#16D583]">Active</span>
-              </td>
-              <td className="text-left">
-                <div className="">
-                  <button className="px-4 py-2 bg-blue-600 rounded-sm text-white">Edit</button>
-                  <button className="px-4 py-2 bg-[#EA5656] rounded-sm text-white ml-3">
-                    Delete
-                  </button>
-                </div>
-              </td>
-            </tr>
-            <tr>
-              <td className="pl-10 py-6">Hàng 2 - Cột 1</td>
-              <td>Hàng 2 - Cột 2</td>
-              <td>Hàng 2 - Cột 3</td>
-              <td>Hàng 2 - Cột 4</td>
-            </tr>
-            <tr className="border-b-[1px] border-gray-100 text-sm">
-              <td className="pl-10 py-6">Hàng 3 - Cột 1</td>
-              <td>Hàng 3 - Cột 2</td>
-              <td>Hàng 3 - Cột 3</td>
-              <td>Hàng 3 - Cột 4</td>
-            </tr>
+            {studentData?.total &&
+              studentData.students.map((student, index) => (
+                <tr className="border-b-[1px] border-gray-100 text-sm" key={index}>
+                  <td className="pl-10 py-6">{index + 1}</td>
+                  <td className="pl-10 py-6">{student.name}</td>
+                  <td className="text-center">{student.email}</td>
+                  <td className="text-center">
+                    {student.status ? (
+                      <span className="px-10 py-2 bg-[#E3FEF3] text-[#16D583]">Active</span>
+                    ) : (
+                      <span className="px-10 py-2 bg-gray-300 text-[#16D583]">Inactive</span>
+                    )}
+                  </td>
+                  <td className="text-left">
+                    <div className="">
+                      <button
+                        className="px-4 py-2 bg-blue-600 rounded-sm text-white"
+                        onClick={() => {
+                          setSelectedPhone(student.phone);
+                          setOpenEditModal(true);
+                        }}
+                      >
+                        Edit
+                      </button>
+                      <button
+                        className={`px-4 py-2  rounded-sm text-white ml-3 ${
+                          loading && selectedPhone === student.phone
+                            ? "bg-gray-500"
+                            : "bg-[#EA5656]"
+                        }`}
+                        onClick={() => {
+                          setSelectedPhone(student.phone);
+                          handleDeleteClick(student.phone);
+                        }}
+                      >
+                        {loading ? "Loading ..." : "Delete"}
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
           </tbody>
         </table>
       </div>
 
       {/* create model */}
       {openCreateModal && <CreateStudentModal onClose={() => setOpenCreateModal(false)} />}
+
+      {/* edit model1 */}
+      {openEditModal && (
+        <EditStudentModal onClose={() => setOpenEditModal(false)} phone={selectedPhone} />
+      )}
     </div>
   );
 }

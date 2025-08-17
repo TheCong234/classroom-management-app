@@ -1,22 +1,25 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
-import { createStudentSchema } from "../../../validations/createStudentSchema.js";
 import useInstructor from "../../../hooks/useInstructor.js";
+import { useEffect } from "react";
+import { editStudentSchema } from "../../../validations/editStudentSchema.js";
 
-export default function CreateStudentModal({ onClose }) {
-  const { loading, handleAddStudent } = useInstructor();
+export default function EditStudentModal({ onClose, phone }) {
+  const { loading, studentProfile, handleEditStudent, handleGetStudentProfile } = useInstructor();
   const {
     register,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm({
-    resolver: yupResolver(createStudentSchema),
+    resolver: yupResolver(editStudentSchema),
+    defaultValues: studentProfile,
   });
 
   const onSubmit = async (data) => {
     console.log("Dữ liệu:", data);
     try {
-      const result = await handleAddStudent(data);
+      const result = await handleEditStudent({ phone, ...data });
       if (result.payload.success === false) {
         alert(result.payload.message);
         return;
@@ -27,13 +30,23 @@ export default function CreateStudentModal({ onClose }) {
       console.log(error);
     }
   };
+
+  useEffect(() => {
+    handleGetStudentProfile({ phone });
+  }, [phone]);
+
+  useEffect(() => {
+    if (studentProfile) {
+      reset(studentProfile);
+    }
+  }, [studentProfile, reset]);
   return (
     <div className="flex items-center justify-center z-10 fixed inset-0  bg-black/30">
       <form
         className="md:w-3xl bg-white rounded-lg shadow py-6 px-8 "
         onSubmit={handleSubmit(onSubmit)}
       >
-        <h2 className="font-medium text-[25px] text-center">Create Student</h2>
+        <h2 className="font-medium text-[25px] text-center">Edit Student</h2>
         <div className="grid grid-cols-2 gap-8 mt-8">
           <div>
             <label htmlFor="studentName" className="text-sm">
@@ -46,18 +59,6 @@ export default function CreateStudentModal({ onClose }) {
               className="text-sm px-4 py-2 border-[1px] border-[#BCBCBC] rounded w-full mt-1"
             />
             {errors.name && <p className="text-red-500 text-xs mt-2">{errors.name.message}</p>}
-          </div>
-          <div>
-            <label htmlFor="phone" className="text-sm">
-              Phone Number
-            </label>
-            <input
-              {...register("phone")}
-              type="text"
-              id="phone"
-              className="text-sm px-4 py-2 border-[1px] border-[#BCBCBC] rounded w-full mt-1"
-            />
-            {errors.phone && <p className="text-red-500 text-xs mt-2">{errors.phone.message}</p>}
           </div>
           <div>
             <label htmlFor="email" className="text-sm">
@@ -109,7 +110,7 @@ export default function CreateStudentModal({ onClose }) {
               loading ? "bg-gray-500" : "bg-[#2C7BE5]"
             }`}
           >
-            {loading ? "Loading ..." : "Create"}
+            {loading ? "Loading ..." : "Submit"}
           </button>
         </div>
       </form>

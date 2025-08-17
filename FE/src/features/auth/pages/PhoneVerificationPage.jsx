@@ -7,7 +7,7 @@ import { getPhone } from "../../../utils/localStoreHelper.js";
 
 export default function PhoneVerificationPage() {
   const navigate = useNavigate();
-  const { hanldeValidateAccessCodeByPhone } = useAuth();
+  const { loading, hanldeValidateAccessCodeByPhone } = useAuth();
   const {
     register,
     handleSubmit,
@@ -25,9 +25,9 @@ export default function PhoneVerificationPage() {
         return alert(resData.message);
       }
       localStorage.setItem("token", resData.token);
-      if (resData.role === "instructor") {
+      if (resData.user.role === "instructor") {
         navigate("/instructor");
-      } else if (resData.role === "student") {
+      } else if (resData.user.role === "student") {
         navigate("/student");
       } else {
         navigate("/signin");
@@ -72,8 +72,14 @@ export default function PhoneVerificationPage() {
       {errors.accessCode && (
         <p className="text-red-500 text-xs mt-2">{errors.accessCode.message}</p>
       )}
-      <button type="submit" className="mt-6 rounded-md bg-blue-500 w-full py-2 text-white text-sm">
-        Submit
+      <button
+        disabled={loading}
+        type="submit"
+        className={`mt-6 rounded-md  w-full py-2 text-white text-sm ${
+          loading ? "bg-gray-500" : "bg-blue-500"
+        }`}
+      >
+        {loading ? "Loading ..." : "Submit"}
       </button>
       <p className="text-[13px] absolute bottom-4 left-6">
         Code not receive?&nbsp;

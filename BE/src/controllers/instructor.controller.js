@@ -51,8 +51,9 @@ const InstructorControllers = {
 
   async editStudent(req, res) {
     const { phone } = req.params;
+    const data = req.body;
     try {
-      const result = await InstructorServices.editStudent(phone, req.body);
+      const result = await InstructorServices.editStudent(phone, data);
       return res.status(statusCode.OK).json(BaseResponse.success("update success", result));
     } catch (error) {
       return res.status(statusCode.INTERNAL_SERVER_ERROR).json(BaseResponse.error(error.message, error));

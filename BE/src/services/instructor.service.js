@@ -1,5 +1,6 @@
 import { v4 as uuidv4 } from "uuid";
 import { db } from "../config/firebase.js";
+import { sendAccessLinkToEmail } from "../utils/emailHelper.js";
 
 const usersCol = db.collection("users");
 
@@ -15,6 +16,9 @@ const InstructorServices = {
         throw new Error("Email already exists.");
       }
 
+      // send a email
+      const result = await sendAccessLinkToEmail(data.email, "Link access");
+      if (!result.success) throw new Error("Send email failed, please try again");
       await usersCol.doc(phone).create(data);
       return { phone, ...data };
     } catch (error) {
@@ -47,12 +51,12 @@ const InstructorServices = {
 
   async getStudents() {
     try {
-      const students = await usersCol.where("role", "==", "student").get();
-      const studentInfoList = students.docs.map((doc) => {
+      const studentSnapshot = await usersCol.where("role", "==", "student").get();
+      const studentInfoList = studentSnapshot.docs.map((doc) => {
         const { lessons, ...baseInfo } = doc.data();
         return { phone: doc.id, ...baseInfo };
       });
-      return studentInfoList;
+      return { total: studentSnapshot.size, students: studentInfoList };
     } catch (error) {
       console.error("Error in getStudents", error);
       throw error;
@@ -75,9 +79,16 @@ const InstructorServices = {
       const student = await usersCol.doc(phone).get();
       if (!student.exists) throw new Error("Student not found");
 
+      if (student.data().email !== data.email) {
+        const emailQuery = await usersCol.where("email", "==", data.email).limit(1).get();
+        if (!emailQuery.empty) {
+          throw new Error("Email already exists.");
+        }
+      }
+
       await usersCol.doc(phone).update(data);
       const updatedStudent = await usersCol.doc(phone).get();
-      return updatedStudent.data();
+      return { ...updatedStudent.data(), phone };
     } catch (error) {
       console.error("Error in editStudent", error);
       throw error;

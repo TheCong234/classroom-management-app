@@ -24,6 +24,28 @@ const contentEmailTemplate = (to, accessCode) => {
     </html>`;
 };
 
+const signinLinkEmailTemplate = (to) => {
+  return ` 
+    <!DOCTYPE html>
+    <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Signin link to Skipli Class</title>
+      </head>
+      <body style="font-family: sans-serif;">
+        <h1 style="color: #FFA900; font-size: 32px' font-weight: 600;">Skipli Company</h1>
+        <hr style="height: 8px; background-color: #ccc;  border: none" />
+        <p>hello <strong>${to},</strong></p>
+        <p>Please follow this link to signin page and verify your email to start using class.</p> 
+        <div style="display: flex; justify-content: center;">
+          <p>${process.env.ORIGIN_CORS_CLIENT}/email-signin</p>
+        </div>  
+        <hr style="height: 8px; background-color: #ccc;  border: none""/>
+      </body>
+    </html>`;
+};
+
 const onSendEmail = (to, subject, template) => {
   const transport = nodeMailer.createTransport({
     host: "smtp.gmail.com",
@@ -65,4 +87,15 @@ const sendAccessCodeToEmail = async (email, subject = "Access code to Classroom"
   }
 };
 
-export { sendAccessCodeToEmail };
+const sendAccessLinkToEmail = async (email, subject = "Link to Classroom") => {
+  try {
+    const template = signinLinkEmailTemplate(email);
+    const result = await onSendEmail(email, subject, template);
+    return result;
+  } catch (error) {
+    console.error("Error in sendAccessLinkToEmail:", error);
+    throw error;
+  }
+};
+
+export { sendAccessCodeToEmail, sendAccessLinkToEmail };

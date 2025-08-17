@@ -1,5 +1,6 @@
 import { lazy } from "react";
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, Navigate } from "react-router-dom";
+import ProtectedRoute from "./ProtectedRoutes.jsx";
 
 // Lazy load layouts
 const App = lazy(() => import("../App.jsx"));
@@ -32,7 +33,7 @@ const routesConfig = [
         children: [
           {
             path: "",
-            element: <PhoneSigninPage />,
+            element: <Navigate to="/signin" replace />,
           },
           {
             path: "signin",
@@ -54,8 +55,16 @@ const routesConfig = [
       },
       {
         path: "/instructor",
-        element: <InstructorLayout />,
+        element: (
+          <ProtectedRoute requiredRole={"instructor"}>
+            <InstructorLayout />
+          </ProtectedRoute>
+        ),
         children: [
+          {
+            path: "",
+            element: <Navigate to="students" replace />,
+          },
           {
             path: "students",
             element: <InsStudentsPage />,
@@ -72,8 +81,16 @@ const routesConfig = [
       },
       {
         path: "/student",
-        element: <StudentLayout />,
+        element: (
+          <ProtectedRoute requiredRole={"student"}>
+            <StudentLayout />
+          </ProtectedRoute>
+        ),
         children: [
+          {
+            path: "",
+            element: <Navigate to="lessons" replace />,
+          },
           {
             path: "lessons",
             element: <StuLessonsPage />,

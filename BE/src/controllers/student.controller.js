@@ -46,8 +46,9 @@ const StudentControllers = {
 
   async editProfile(req, res) {
     const { phone } = req.user;
+    const data = req.body;
     try {
-      const result = await StudentServices.editProfile(phone, req.body);
+      const result = await StudentServices.editProfile(phone, data);
       return res.status(statusCode.OK).json(BaseResponse.success("update success", result));
     } catch (error) {
       return res.status(statusCode.INTERNAL_SERVER_ERROR).json(BaseResponse.error(error.message, error));

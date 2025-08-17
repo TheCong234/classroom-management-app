@@ -37,15 +37,25 @@ const AuthServices = {
         throw new Error("Code is invalid");
       }
       await db.collection("accessCodes").doc(phone).delete();
-      const user = await db.collection("users").doc(phone).get();
-      const role = user.exists ? user.data().role : null;
+      const userSnapshot = await db.collection("users").doc(phone).get();
+      const userData = userSnapshot.data();
 
-      const token = jwt.sign({ phone: phone, role: role }, jwtSecretKey, {
+      const token = jwt.sign({ phone: phone, role: userData.role }, jwtSecretKey, {
         expiresIn: "5d",
       });
-      return { phone, role, token };
+      return { user: userData, token };
     } catch (error) {
       console.error("Error in validateAccessCode:", error);
+      throw error;
+    }
+  },
+
+  async getMyProfile(phone) {
+    try {
+      const studentSnapshot = await usersCol.doc(phone).get();
+      return studentSnapshot.data();
+    } catch (error) {
+      console.error("Error in getMyProfile:", error);
       throw error;
     }
   },

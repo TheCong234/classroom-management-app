@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import {
   createAccessCodeByPhoneAction,
+  getMyProfileAction,
   validateAccessCodeByPhoneAction,
 } from "../actions/authActions.js";
 
@@ -15,6 +16,11 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     resetState: () => initialState,
+    signout: (state) => {
+      state.currentUser = null;
+      localStorage.removeItem("token");
+      localStorage.removeItem("phone");
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -38,8 +44,23 @@ const authSlice = createSlice({
       })
       .addCase(validateAccessCodeByPhoneAction.fulfilled, (state, action) => {
         state.loading = false;
+        state.currentUser = action.payload.user;
       })
       .addCase(validateAccessCodeByPhoneAction.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      //getMyProfile
+      .addCase(getMyProfileAction.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getMyProfileAction.fulfilled, (state, action) => {
+        state.loading = false;
+        state.currentUser = action.payload;
+      })
+      .addCase(getMyProfileAction.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });
@@ -47,3 +68,4 @@ const authSlice = createSlice({
 });
 
 export default authSlice.reducer;
+export const { signout } = authSlice.actions;

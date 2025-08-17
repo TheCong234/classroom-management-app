@@ -7,7 +7,7 @@ import useStudent from "../../../hooks/useStudent.js";
 
 export default function EmailVerificationPage() {
   const navigate = useNavigate();
-  const { hanldeValidateAccessCodeByEmail } = useStudent();
+  const { loading, hanldeValidateAccessCodeByEmail } = useStudent();
   const {
     register,
     handleSubmit,
@@ -25,11 +25,11 @@ export default function EmailVerificationPage() {
         return alert(resData.message);
       }
       localStorage.removeItem(email);
-      localStorage.setItem("phone", resData.phone);
+      localStorage.setItem("phone", resData.user.phone);
       localStorage.setItem("token", resData.token);
-      if (resData.role === "instructor") {
+      if (resData.user.role === "instructor") {
         navigate("/instructor");
-      } else if (resData.role === "student") {
+      } else if (resData.user.role === "student") {
         navigate("/student");
       } else {
         navigate("/signin");
@@ -74,8 +74,14 @@ export default function EmailVerificationPage() {
       {errors.accessCode && (
         <p className="text-red-500 text-xs mt-2">{errors.accessCode.message}</p>
       )}
-      <button type="submit" className="mt-6 rounded-md bg-blue-500 w-full py-2 text-white text-sm">
-        Submit
+      <button
+        disabled={loading}
+        type="submit"
+        className={`mt-6 rounded-md  w-full py-2 text-white text-sm ${
+          loading ? "bg-gray-500" : "bg-blue-500"
+        }`}
+      >
+        {loading ? "Loading ..." : "Submit"}
       </button>
       <p className="text-[13px] absolute bottom-4 left-6">
         Code not receive?&nbsp;

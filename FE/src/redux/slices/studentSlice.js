@@ -7,8 +7,9 @@ import {
 const initialState = {
   loading: false,
   error: null,
+  currentUser: null,
 };
-const authSlice = createSlice({
+const studentSlice = createSlice({
   name: "student",
   initialState,
   reducers: {
@@ -36,6 +37,7 @@ const authSlice = createSlice({
       })
       .addCase(validateAccessCodeByEmailAction.fulfilled, (state, action) => {
         state.loading = false;
+        state.currentUser = action.payload.user;
       })
       .addCase(validateAccessCodeByEmailAction.rejected, (state, action) => {
         state.loading = false;
@@ -44,4 +46,4 @@ const authSlice = createSlice({
   },
 });
 
-export default authSlice.reducer;
+export default studentSlice.reducer;
