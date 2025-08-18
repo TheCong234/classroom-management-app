@@ -8,7 +8,7 @@ import {
 const initialState = {
   loading: false,
   error: null,
-  conversation: [],
+  conversation: { phone: "", messages: [] },
   chats: [],
 };
 const chatSlice = createSlice({
@@ -16,6 +16,14 @@ const chatSlice = createSlice({
   initialState,
   reducers: {
     resetState: () => initialState,
+    updateConversation: (state, action) => {
+      console.log("actionnnn: ", action);
+
+      const { participants, newMessage } = action.payload;
+      if (participants.includes(state.conversation.phone)) {
+        state.conversation.messages = [...state.conversation.messages, newMessage];
+      }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -26,7 +34,7 @@ const chatSlice = createSlice({
       })
       .addCase(sendMessageAction.fulfilled, (state, action) => {
         state.loading = false;
-        state.conversation.push(action.payload.newMessage);
+        state.conversation.messages.push(action.payload.newMessage);
       })
       .addCase(sendMessageAction.rejected, (state, action) => {
         state.loading = false;
@@ -40,7 +48,7 @@ const chatSlice = createSlice({
       })
       .addCase(getConversationAction.fulfilled, (state, action) => {
         state.loading = false;
-        state.conversation = action.payload.messages;
+        state.conversation = action.payload;
       })
       .addCase(getConversationAction.rejected, (state, action) => {
         state.loading = false;
@@ -64,3 +72,4 @@ const chatSlice = createSlice({
 });
 
 export default chatSlice.reducer;
+export const { updateConversation } = chatSlice.actions;

@@ -3,9 +3,11 @@ import { Outlet } from "react-router-dom";
 import useAuth from "./hooks/useAuth.js";
 import { getToken } from "./utils/localStoreHelper.js";
 import socket from "./configs/socketClient.js";
+import useChat from "./hooks/useChat.js";
 
 const App = () => {
   const { currentUser, hanldeGetMyProfile } = useAuth();
+  const { hanldeUpdateConversation } = useChat();
 
   const onFetchData = async () => {
     await hanldeGetMyProfile();
@@ -20,8 +22,9 @@ const App = () => {
     if (currentUser?.phone) {
       socket.emit("register", currentUser.phone);
 
-      socket.on("message", (message) => {
-        console.log("Tin nhan mới:", message);
+      socket.on("message", (data) => {
+        console.log("Tin nhan mới:", data);
+        hanldeUpdateConversation(data);
         //
       });
 

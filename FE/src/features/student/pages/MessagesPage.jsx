@@ -18,7 +18,7 @@ export default function MessagesPage() {
   return (
     <div className="flex max-h-[80vh] h-full">
       {/* list chat */}
-      <div className="w-[280px]">
+      <div className="w-[380px]">
         <ul>
           {chats.length &&
             chats.map((chat) => (
@@ -31,7 +31,7 @@ export default function MessagesPage() {
                     }`
                   }
                 >
-                  <div className="bg-gray-300 rounded-md p-2">
+                  <div className="bg-gray-300 rounded-md p-2 w-full">
                     <div className="w-full h-[69px]   flex gap-2 items-center">
                       <div>
                         <img
@@ -43,7 +43,7 @@ export default function MessagesPage() {
                       </div>
                       <div>
                         <p className="font-bold flex">
-                          <span className="text-blue-600 truncate block max-w-[100px] ">
+                          <span className="text-blue-600 truncate block max-w-[150px] ">
                             {getInfoPartner(currentUser.email, chat.partnerInfo).name}
                           </span>
                         </p>
@@ -52,8 +52,10 @@ export default function MessagesPage() {
                         </p>
                       </div>
                     </div>
-                    <p className="truncate block max-w-[100px] text-xs">
-                      Last: {chat.lastMessage.text}
+                    <p className="truncate block max-w-[300px] text-xs ml-10">
+                      {chat.lastMessage.sender === currentUser.phone
+                        ? `Bạn: ${chat.lastMessage.text}`
+                        : chat.lastMessage.text}
                     </p>
                   </div>
                 </NavLink>

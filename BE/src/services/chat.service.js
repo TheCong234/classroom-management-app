@@ -1,5 +1,6 @@
 import { db } from "../config/firebase.js";
 import { v4 as uuidv4 } from "uuid";
+import { getIO } from "../config/socket.js";
 
 const ChatServices = {
   async sendMessage(sender, receiver, text) {
@@ -20,6 +21,10 @@ const ChatServices = {
       const receiverData = (await db.collection("users").doc(receiver).get()).data();
       const { lessons, ...senderInfo } = senderData;
       const { lessons: temp, ...receiverInfo } = receiverData;
+
+      //socket
+      getIO().sendMessageToUser(receiver, "message", { participants: [sender, receiver], newMessage });
+
       await db
         .collection("conversations")
         .doc(conversationId)
@@ -50,7 +55,7 @@ const ChatServices = {
 
       const snapshot = await messagesRef.get();
       const messages = snapshot.docs.map((doc) => doc.data());
-      return { messages };
+      return { phone: otherPhone, messages };
     } catch (error) {
       console.error("Error in getConversation", error);
       throw error;

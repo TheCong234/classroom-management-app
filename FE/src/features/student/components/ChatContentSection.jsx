@@ -38,9 +38,9 @@ const ChatContentSection = () => {
   }, [phone]);
   return (
     <div className="bg-[#F6F6F6] rounded-3xl overflow-hidden w-full mx-10  flex flex-col justify-between">
-      <div className="px-6 pt-6">
+      <div className="px-6 pt-6 h-full overflow-y-scroll pb-4">
         {conversation &&
-          conversation.map((mess) => (
+          conversation.messages.map((mess) => (
             <div
               key={mess.id}
               className={`flex ${

@@ -2,12 +2,14 @@ import { useEffect, useState } from "react";
 import CreateStudentModal from "../components/CreateStudentModal.jsx";
 import useInstructor from "../../../hooks/useInstructor.js";
 import EditStudentModal from "../components/EditStudentModel.jsx";
+import useChat from "../../../hooks/useChat.js";
 
 export default function StudentsPage() {
   const [openCreateModal, setOpenCreateModal] = useState(false);
   const [openEditModal, setOpenEditModal] = useState(false);
   const [selectedPhone, setSelectedPhone] = useState("");
   const { loading, studentData, handleGetAllStudents, handleDeleteStudent } = useInstructor();
+  const { hanldeSendMessage } = useChat();
 
   const handleDeleteClick = async (phone) => {
     try {
@@ -17,6 +19,23 @@ export default function StudentsPage() {
         return;
       }
       alert("Deleted student");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleMessageClick = async (phone) => {
+    const text = prompt("Enter your message");
+    if (!text.trim()) {
+      return;
+    }
+    try {
+      const result = await hanldeSendMessage({ receiver: phone, text });
+      if (result.payload.success === false) {
+        alert(result.payload.message);
+        return;
+      }
+      alert("send message is success");
     } catch (error) {
       console.log(error);
     }
@@ -102,7 +121,7 @@ export default function StudentsPage() {
                   </td>
                   <td className="text-center">{student.address}</td>
                   <td className="text-left">
-                    <div className="">
+                    <div className="flex gap-2">
                       <button
                         className="px-4 py-2 bg-blue-600 rounded-sm text-white"
                         onClick={() => {
@@ -124,6 +143,25 @@ export default function StudentsPage() {
                         }}
                       >
                         {loading ? "Loading ..." : "Delete"}
+                      </button>
+                      <button
+                        className="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center cursor-pointer hover:bg-gray-300"
+                        onClick={() => handleMessageClick(student.phone)}
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          strokeWidth={1.5}
+                          stroke="currentColor"
+                          className="size-7"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M8.625 9.75a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375m-13.5 3.01c0 1.6 1.123 2.994 2.707 3.227 1.087.16 2.185.283 3.293.369V21l4.184-4.183a1.14 1.14 0 0 1 .778-.332 48.294 48.294 0 0 0 5.83-.498c1.585-.233 2.708-1.626 2.708-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z"
+                          />
+                        </svg>
                       </button>
                     </div>
                   </td>
