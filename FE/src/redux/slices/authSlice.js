@@ -4,6 +4,7 @@ import {
   getMyProfileAction,
   validateAccessCodeByPhoneAction,
 } from "../actions/authActions.js";
+import { validateAccessCodeByEmailAction } from "../actions/studentAction.js";
 
 const initialState = {
   // token: getToken() || null,
@@ -47,6 +48,20 @@ const authSlice = createSlice({
         state.currentUser = action.payload.user;
       })
       .addCase(validateAccessCodeByPhoneAction.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      //validateAccessCodeByEmail
+      .addCase(validateAccessCodeByEmailAction.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(validateAccessCodeByEmailAction.fulfilled, (state, action) => {
+        state.loading = false;
+        state.currentUser = action.payload.user;
+      })
+      .addCase(validateAccessCodeByEmailAction.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })

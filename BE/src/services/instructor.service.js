@@ -34,6 +34,7 @@ const InstructorServices = {
         id: lessonId,
         title,
         description,
+        completed: false,
       };
 
       await Promise.all(

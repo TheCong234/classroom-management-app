@@ -1,13 +1,14 @@
 import { createSlice } from "@reduxjs/toolkit";
 import {
   createAccessCodeByEmailAction,
-  validateAccessCodeByEmailAction,
+  getMyLessonsAction,
+  markLessonDoneAction,
 } from "../actions/studentAction.js";
 
 const initialState = {
   loading: false,
   error: null,
-  currentUser: null,
+  myLessons: { total: 0, lessons: [] },
 };
 const studentSlice = createSlice({
   name: "student",
@@ -30,16 +31,33 @@ const studentSlice = createSlice({
         state.error = action.payload;
       })
 
-      //validateAccessCodeByPhone
-      .addCase(validateAccessCodeByEmailAction.pending, (state) => {
+      //getMyLessons
+      .addCase(getMyLessonsAction.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(validateAccessCodeByEmailAction.fulfilled, (state, action) => {
+      .addCase(getMyLessonsAction.fulfilled, (state, action) => {
         state.loading = false;
-        state.currentUser = action.payload.user;
+        state.myLessons = action.payload;
       })
-      .addCase(validateAccessCodeByEmailAction.rejected, (state, action) => {
+      .addCase(getMyLessonsAction.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      //markLessonDone
+      .addCase(markLessonDoneAction.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(markLessonDoneAction.fulfilled, (state, action) => {
+        state.loading = false;
+        const index = state.myLessons.lessons.findIndex(
+          (lesson) => lesson.id === action.payload.id
+        );
+        state.myLessons.lessons[index] = action.payload;
+      })
+      .addCase(markLessonDoneAction.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });

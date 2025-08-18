@@ -24,3 +24,27 @@ export const validateAccessCodeByEmailAction = createAsyncThunk(
     }
   }
 );
+
+export const getMyLessonsAction = createAsyncThunk(
+  "student/get-my-lessons",
+  async (data, { rejectWithValue }) => {
+    try {
+      const response = await studentServices.getMyLessons(data);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || "getMyLessonsAction failed");
+    }
+  }
+);
+
+export const markLessonDoneAction = createAsyncThunk(
+  "student/mark-lessons-done",
+  async (data, { rejectWithValue }) => {
+    try {
+      const response = await studentServices.markLessonDone(data);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || "markLessonDoneAction failed");
+    }
+  }
+);

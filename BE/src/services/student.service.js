@@ -63,8 +63,9 @@ const StudentServices = {
   async getMyLessons(phone) {
     try {
       const studentSnapshot = await usersCol.doc(phone).get();
-      const student = studentSnapshot.data();
-      return student?.lessons;
+      const lessons = studentSnapshot.data().lessons;
+      const total = lessons.length;
+      return { total, lessons };
     } catch (error) {
       console.error("Error in getMyLessons", error);
       throw error;
