@@ -1,22 +1,40 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import { codeSchema } from "../../../validations/codeSchema.js";
+import { accessCodeSchema } from "../../../validations/codeSchema.js";
+import useAuth from "../../../hooks/useAuth.js";
+import { getPhone } from "../../../utils/localStoreHelper.js";
 
 export default function PhoneVerificationPage() {
   const navigate = useNavigate();
+  const { loading, hanldeValidateAccessCodeByPhone } = useAuth();
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm({
-    resolver: yupResolver(codeSchema),
+    resolver: yupResolver(accessCodeSchema),
   });
 
-  const onSubmit = (data) => {
-    console.log("Dữ liệu:", data);
-    navigate("/student");
-    navigate("/instructor");
+  const onSubmit = async (data) => {
+    try {
+      const phone = getPhone();
+      const result = await hanldeValidateAccessCodeByPhone({ ...data, phone });
+      const resData = result.payload;
+      if (resData.success === false) {
+        return alert(resData.message);
+      }
+      localStorage.setItem("token", resData.token);
+      if (resData.user.role === "instructor") {
+        navigate("/instructor");
+      } else if (resData.user.role === "student") {
+        navigate("/student");
+      } else {
+        navigate("/signin");
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
   return (
     <form
@@ -46,14 +64,22 @@ export default function PhoneVerificationPage() {
         Please enter your code that send to your phone
       </p>
       <input
-        {...register("phone")}
+        {...register("accessCode")}
         type="text"
         placeholder="Enter Your Code"
         className="border-[1px] border-[#9095A1] px-3 py-2 w-full mt-10 rounded-md text-sm"
       />
-      {errors.phone && <p className="text-red-500 text-xs mt-2">{errors.phone.message}</p>}
-      <button type="submit" className="mt-6 rounded-md bg-blue-500 w-full py-2 text-white text-sm">
-        Submit
+      {errors.accessCode && (
+        <p className="text-red-500 text-xs mt-2">{errors.accessCode.message}</p>
+      )}
+      <button
+        disabled={loading}
+        type="submit"
+        className={`mt-6 rounded-md  w-full py-2 text-white text-sm ${
+          loading ? "bg-gray-500" : "bg-blue-500"
+        }`}
+      >
+        {loading ? "Loading ..." : "Submit"}
       </button>
       <p className="text-[13px] absolute bottom-4 left-6">
         Code not receive?&nbsp;

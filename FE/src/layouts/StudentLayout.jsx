@@ -1,10 +1,28 @@
 import { NavLink, Outlet } from "react-router-dom";
+import useAuth from "../hooks/useAuth.js";
 
 export default function StudentLayout() {
+  const { currentUser, hanldeSignout } = useAuth();
+  const onSignout = () => {
+    hanldeSignout();
+  };
   return (
-    <div className="h-screen flex">
+    <div className="h-screen max-h-screen flex">
       <aside className="w-[280px] py-4 px-6">
-        <div className="w-full h-[69px]  bg-gray-500"></div>
+        <div className="w-full h-[69px]  bg-gray-300 rounded-md p-2 flex gap-2 items-center">
+          <div>
+            <img src="/images/logo-skipli.png" width={"42px"} alt="Logo" />
+          </div>
+          <div>
+            <p className="font-bold flex">
+              Hi!{" "}
+              <span className="text-blue-600 truncate block max-w-[100px] ">
+                {currentUser?.name}
+              </span>
+            </p>
+            <p className="text-xs text-gray-500">{currentUser?.role}</p>
+          </div>
+        </div>
         <nav className=" h-full mt-4">
           <ul>
             <li>
@@ -34,7 +52,7 @@ export default function StudentLayout() {
           </ul>
         </nav>
       </aside>
-      <div className="w-full">
+      <div className="w-full ">
         <header className="py-4 px-10">
           <div className="w-full h-[69px] flex gap-3 items-center justify-end">
             <svg
@@ -52,12 +70,28 @@ export default function StudentLayout() {
               />
             </svg>
 
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className="size-7"
+              onClick={onSignout}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15M12 9l-3 3m0 0 3 3m-3-3h12.75"
+              />
+            </svg>
+
             <div className="rounded-full overflow-hidden border">
               <img src="/images/no-avatar.jpg" width={"42px"} height={"42px"} />
             </div>
           </div>
         </header>
-        <main className="">
+        <main className="h-full max-h-[80vh]">
           <Outlet />
         </main>
       </div>

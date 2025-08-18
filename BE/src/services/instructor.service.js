@@ -1,0 +1,116 @@
+import { v4 as uuidv4 } from "uuid";
+import { db } from "../config/firebase.js";
+import { sendAccessLinkToEmail } from "../utils/emailHelper.js";
+
+const usersCol = db.collection("users");
+
+const InstructorServices = {
+  async addStudent(phone, data) {
+    try {
+      const existsPhone = await usersCol.doc(phone).get();
+      if (existsPhone.exists) {
+        throw new Error(`Phone ${phone} already exists.`);
+      }
+      const emailQuery = await usersCol.where("email", "==", data.email).limit(1).get();
+      if (!emailQuery.empty) {
+        throw new Error("Email already exists.");
+      }
+
+      // send a email
+      const result = await sendAccessLinkToEmail(data.email, "Link access");
+      if (!result.success) throw new Error("Send email failed, please try again");
+      await usersCol.doc(phone).create(data);
+      return { phone, ...data };
+    } catch (error) {
+      console.error("Error in createUser", error);
+      throw error;
+    }
+  },
+
+  async assignLesson(studentPhones, title, description) {
+    try {
+      const lessonId = uuidv4();
+      const newLesson = {
+        id: lessonId,
+        title,
+        description,
+        completed: false,
+      };
+
+      await Promise.all(
+        studentPhones.map(async (phone) => {
+          const studentSnapshot = await usersCol.doc(phone).get();
+          const studentData = studentSnapshot.data();
+          await usersCol.doc(phone).update({
+            lessons: [...studentData.lessons, newLesson],
+          });
+        })
+      );
+      return { studentPhones };
+    } catch (error) {
+      console.error("Error in assignLesson", error);
+      throw error;
+    }
+  },
+
+  async getStudents() {
+    try {
+      const studentSnapshot = await usersCol.where("role", "==", "student").get();
+      const studentInfoList = studentSnapshot.docs.map((doc) => {
+        const { lessons, ...baseInfo } = doc.data();
+        return { phone: doc.id, ...baseInfo };
+      });
+      return { total: studentSnapshot.size, students: studentInfoList };
+    } catch (error) {
+      console.error("Error in getStudents", error);
+      throw error;
+    }
+  },
+
+  async getStudentProfile(phone) {
+    try {
+      const student = await usersCol.doc(phone).get();
+      if (!student.exists) throw new Error("Student not found");
+      return student.data();
+    } catch (error) {
+      console.error("Error in getStudentProfile", error);
+      throw error;
+    }
+  },
+
+  async editStudent(phone, data) {
+    try {
+      const student = await usersCol.doc(phone).get();
+      if (!student.exists) throw new Error("Student not found");
+
+      if (student.data().email !== data.email) {
+        const emailQuery = await usersCol.where("email", "==", data.email).limit(1).get();
+        if (!emailQuery.empty) {
+          throw new Error("Email already exists.");
+        }
+      }
+
+      await usersCol.doc(phone).update(data);
+      const updatedStudent = await usersCol.doc(phone).get();
+      return { ...updatedStudent.data(), phone };
+    } catch (error) {
+      console.error("Error in editStudent", error);
+      throw error;
+    }
+  },
+
+  async deleteStudent(phone) {
+    try {
+      const student = await usersCol.doc(phone).get();
+      if (!student.exists) throw new Error("Student not found");
+
+      await usersCol.doc(phone).delete();
+      return { phone };
+    } catch (error) {
+      console.error("Error in deleteStudent", error);
+      throw error;
+    }
+  },
+};
+
+export default InstructorServices;

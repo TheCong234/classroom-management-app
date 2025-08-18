@@ -1,10 +1,10 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
 import { createStudentSchema } from "../../../validations/createStudentSchema.js";
+import useInstructor from "../../../hooks/useInstructor.js";
 
 export default function CreateStudentModal({ onClose }) {
-  const navigate = useNavigate();
+  const { loading, handleAddStudent } = useInstructor();
   const {
     register,
     handleSubmit,
@@ -13,9 +13,19 @@ export default function CreateStudentModal({ onClose }) {
     resolver: yupResolver(createStudentSchema),
   });
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     console.log("Dữ liệu:", data);
-    navigate("/phone-verification");
+    try {
+      const result = await handleAddStudent(data);
+      if (result.payload.success === false) {
+        alert(result.payload.message);
+        return;
+      } else {
+        onClose();
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
   return (
     <div className="flex items-center justify-center z-10 fixed inset-0  bg-black/30">
@@ -92,8 +102,14 @@ export default function CreateStudentModal({ onClose }) {
           <button className="px-6 py-2 rounded-sm text-sm bg-gray-200" onClick={onClose}>
             Cancel
           </button>
-          <button className="px-6 py-2 rounded-sm text-sm bg-[#2C7BE5] ml-4 text-white ">
-            Create
+          <button
+            type="submit"
+            disabled={loading}
+            className={`px-6 py-2 rounded-sm text-sm  ml-4 text-white ${
+              loading ? "bg-gray-500" : "bg-[#2C7BE5]"
+            }`}
+          >
+            {loading ? "Loading ..." : "Create"}
           </button>
         </div>
       </form>
