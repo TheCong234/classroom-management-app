@@ -4,10 +4,12 @@ import { useNavigate } from "react-router-dom";
 import { accessCodeSchema } from "../../../validations/codeSchema.js";
 import { getEmail } from "../../../utils/localStoreHelper.js";
 import useStudent from "../../../hooks/useStudent.js";
+import useAuth from "../../../hooks/useAuth.js";
 
 export default function EmailVerificationPage() {
   const navigate = useNavigate();
-  const { loading, hanldeValidateAccessCodeByEmail } = useStudent();
+  const { hanldeValidateAccessCodeByEmail } = useStudent();
+  const { loading } = useAuth();
   const {
     register,
     handleSubmit,

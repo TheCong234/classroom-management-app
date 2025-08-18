@@ -19,9 +19,11 @@ const EmailVerificationPage = lazy(() =>
 );
 const InsStudentsPage = lazy(() => import("../features/instructor/pages/StudentsPage.jsx"));
 const InsLessonsPage = lazy(() => import("../features/instructor/pages/LessonsPage.jsx"));
-const InsMessagesPage = lazy(() => import("../features/instructor/pages/MessagesPage.jsx"));
 const StuLessonsPage = lazy(() => import("../features/student/pages/LessonsPage.jsx"));
 const StuMessagesPage = lazy(() => import("../features/student/pages/MessagesPage.jsx"));
+const ChatContentSection = lazy(() =>
+  import("../features/student/components/ChatContentSection.jsx")
+);
 
 const routesConfig = [
   {
@@ -75,7 +77,13 @@ const routesConfig = [
           },
           {
             path: "messages",
-            element: <InsMessagesPage />,
+            element: <StuMessagesPage />,
+            children: [
+              {
+                path: ":phone",
+                element: <ChatContentSection />,
+              },
+            ],
           },
         ],
       },
@@ -98,6 +106,12 @@ const routesConfig = [
           {
             path: "messages",
             element: <StuMessagesPage />,
+            children: [
+              {
+                path: ":phone",
+                element: <ChatContentSection />,
+              },
+            ],
           },
         ],
       },

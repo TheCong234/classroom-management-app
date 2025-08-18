@@ -7,7 +7,7 @@ export default function StudentLayout() {
     hanldeSignout();
   };
   return (
-    <div className="h-screen flex">
+    <div className="h-screen max-h-screen flex">
       <aside className="w-[280px] py-4 px-6">
         <div className="w-full h-[69px]  bg-gray-300 rounded-md p-2 flex gap-2 items-center">
           <div>
@@ -52,7 +52,7 @@ export default function StudentLayout() {
           </ul>
         </nav>
       </aside>
-      <div className="w-full">
+      <div className="w-full ">
         <header className="py-4 px-10">
           <div className="w-full h-[69px] flex gap-3 items-center justify-end">
             <svg
@@ -91,7 +91,7 @@ export default function StudentLayout() {
             </div>
           </div>
         </header>
-        <main className="">
+        <main className="h-full max-h-[80vh]">
           <Outlet />
         </main>
       </div>

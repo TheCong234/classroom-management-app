@@ -1,4 +1,4 @@
-const userSocketMap = new Map(); // userId -> socketId
+const userSocketMap = new Map();
 
 export default function initSocket(io) {
   io.on("connection", (socket) => {

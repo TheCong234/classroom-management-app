@@ -102,7 +102,7 @@ export default function InstructorLayout() {
             </div>
           </div>
         </header>
-        <main className="">
+        <main className="max-h-[80vh] h-full">
           <Outlet />
         </main>
       </div>

@@ -7,6 +7,7 @@ import studentRoutes from "./routes/student.route.js";
 import http from "http";
 import initSocket, { setIO } from "./config/socket.js";
 import { Server } from "socket.io";
+import chatRoutes from "./routes/chat.route.js";
 
 dotenv.config();
 const app = express();
@@ -33,6 +34,7 @@ initSocket(io);
 app.use("/auth", authRoutes);
 app.use("/instructor", instructorRoutes);
 app.use("/student", studentRoutes);
+app.use("/chat", chatRoutes);
 
 server.listen(3000, () => {
   const PORT = process.env.PORT || 8888;
