@@ -24,6 +24,11 @@ const chatSlice = createSlice({
         state.conversation.messages = [...state.conversation.messages, newMessage];
       }
     },
+
+    addNewMessageSent: (state, action) => {
+      console.log("addNewMessageSent: ", action);
+      state.conversation.messages.push(action.payload);
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -34,7 +39,12 @@ const chatSlice = createSlice({
       })
       .addCase(sendMessageAction.fulfilled, (state, action) => {
         state.loading = false;
-        state.conversation.messages.push(action.payload.newMessage);
+        const index = state.conversation.messages.findIndex(
+          (m) => m.id === action.payload.newMessage.id
+        );
+        if (index) {
+          state.conversation.messages[index] = action.payload.newMessage;
+        }
       })
       .addCase(sendMessageAction.rejected, (state, action) => {
         state.loading = false;
@@ -72,4 +82,4 @@ const chatSlice = createSlice({
 });
 
 export default chatSlice.reducer;
-export const { updateConversation } = chatSlice.actions;
+export const { updateConversation, addNewMessageSent } = chatSlice.actions;

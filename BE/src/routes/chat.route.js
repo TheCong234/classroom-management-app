@@ -7,6 +7,6 @@ const chatRoutes = express.Router();
 chatRoutes.get("/conversation/:phone", verifyToken, ChatControllers.getConversation);
 chatRoutes.get("/conversations", verifyToken, ChatControllers.getMyConversations);
 
-chatRoutes.post("/sendMessage", verifyToken, ChatControllers.addStudent);
+chatRoutes.post("/sendMessage", verifyToken, ChatControllers.sendMessage);
 
 export default chatRoutes;
