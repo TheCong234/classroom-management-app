@@ -4,7 +4,7 @@ import {
   getMyConversationsAction,
   sendMessageAction,
 } from "../redux/actions/chatActions.js";
-import { updateConversation } from "../redux/slices/chatSlice.js";
+import { addNewMessageSent, updateConversation } from "../redux/slices/chatSlice.js";
 
 const useChat = () => {
   const dispatch = useDispatch();
@@ -26,6 +26,10 @@ const useChat = () => {
     return dispatch(updateConversation(data));
   };
 
+  const hanldeAddNewMessageSent = async (data) => {
+    return dispatch(addNewMessageSent(data));
+  };
+
   return {
     error,
     loading,
@@ -35,6 +39,7 @@ const useChat = () => {
     hanldeGetConversation,
     hanldeGetMyConversations,
     hanldeUpdateConversation,
+    hanldeAddNewMessageSent,
   };
 };
 

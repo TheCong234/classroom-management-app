@@ -2,9 +2,16 @@ import { useEffect, useState } from "react";
 import useChat from "../../../hooks/useChat.js";
 import { useParams } from "react-router-dom";
 import useAuth from "../../../hooks/useAuth.js";
+import { v4 as uuidv4 } from "uuid";
 
 const ChatContentSection = () => {
-  const { loading, conversation, hanldeSendMessage, hanldeGetConversation } = useChat();
+  const {
+    loading,
+    conversation,
+    hanldeSendMessage,
+    hanldeGetConversation,
+    hanldeAddNewMessageSent,
+  } = useChat();
   const { currentUser } = useAuth();
   const [text, setText] = useState("");
   const { phone } = useParams();
@@ -20,8 +27,10 @@ const ChatContentSection = () => {
   };
 
   const onSubmit = async () => {
+    const messageId = uuidv4();
     try {
-      const result = await hanldeSendMessage({ receiver: phone, text });
+      hanldeAddNewMessageSent({ id: messageId, sender: currentUser.phone, receiver: phone, text });
+      const result = await hanldeSendMessage({ messageId: messageId, receiver: phone, text });
       const resData = result.payload;
       if (resData.success === false) {
         return alert(resData.message);

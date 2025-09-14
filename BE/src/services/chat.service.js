@@ -1,14 +1,14 @@
 import { db } from "../config/firebase.js";
-import { v4 as uuidv4 } from "uuid";
 import { getIO } from "../config/socket.js";
 
 const ChatServices = {
-  async sendMessage(sender, receiver, text) {
+  async sendMessage(messageId, sender, receiver, text) {
+    console.log(messageId, sender, receiver, text);
+
     const conversationId = [sender, receiver].sort().join("_");
     try {
       const messagesRef = db.collection("conversations").doc(conversationId).collection("messages");
 
-      const messageId = uuidv4();
       const newMessage = {
         id: messageId,
         sender,

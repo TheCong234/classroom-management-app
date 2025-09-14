@@ -3,11 +3,11 @@ import statusCode from "../constants/status-code.js";
 import BaseResponse from "../config/base-response.js";
 
 const ChatControllers = {
-  async addStudent(req, res) {
+  async sendMessage(req, res) {
     const sender = req.user.phone;
-    const { receiver, text } = req.body;
+    const { messageId, receiver, text } = req.body;
     try {
-      const result = await ChatServices.sendMessage(sender, receiver, text);
+      const result = await ChatServices.sendMessage(messageId, sender, receiver, text);
       return res.status(statusCode.OK).json(BaseResponse.success("create success", result));
     } catch (error) {
       return res.status(statusCode.INTERNAL_SERVER_ERROR).json(BaseResponse.error(error.message, error));
